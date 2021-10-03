@@ -1,0 +1,9 @@
+[0] Config.pm:304> INFO - This is Biber 2.14 (beta)
+[0] Config.pm:307> INFO - Logfile is 'pts.blg'
+[58] biber:322> INFO - === dim. oct.  3, 2021, 17:02:17
+[70] Biber.pm:415> INFO - Reading 'pts.bcf'
+[121] Biber.pm:943> INFO - Found 0 citekeys in bib section 0
+[127] Utils.pm:293> WARN - The file 'pts.bcf' does not contain any citations!
+[133] bbl.pm:652> INFO - Writing 'pts.bbl' with encoding 'UTF-8'
+[133] bbl.pm:755> INFO - Output to pts.bbl
+[133] Biber.pm:128> INFO - WARNINGS: 1

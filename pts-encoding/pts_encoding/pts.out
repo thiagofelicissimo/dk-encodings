@@ -1,0 +1,16 @@
+\BOOKMARK [1][-]{section.1}{PTS}{}% 1
+\BOOKMARK [1][-]{section.2}{Administrative PTS}{}% 2
+\BOOKMARK [1][-]{section.3}{Soundness}{}% 3
+\BOOKMARK [1][-]{section.4}{Conservativity}{}% 4
+\BOOKMARK [1][-]{section.5}{Encoding APTS in Dedukti}{}% 5
+\BOOKMARK [2][-]{subsection.5.1}{Soundness}{section.5}% 6
+\BOOKMARK [2][-]{subsection.5.2}{Some metatheory}{section.5}% 7
+\BOOKMARK [1][-]{section.6}{A form of conservativity}{}% 8
+\BOOKMARK [1][-]{section.7}{Encoding on the \040bold0mu mumu bold0mu mumu -calculus}{}% 9
+\BOOKMARK [2][-]{subsection.7.1}{Defining the encoding}{section.7}% 10
+\BOOKMARK [1][-]{section.8}{Non-Prenex UP}{}% 11
+\BOOKMARK [2][-]{subsection.8.1}{Metatheory LambdaPiM}{section.8}% 12
+\BOOKMARK [2][-]{subsection.8.2}{System}{section.8}% 13
+\BOOKMARK [2][-]{subsection.8.3}{Metatheory}{section.8}% 14
+\BOOKMARK [1][-]{section.9}{Encoding}{}% 15
+\BOOKMARK [2][-]{subsection.9.1}{Correctness of the translation}{section.9}% 16

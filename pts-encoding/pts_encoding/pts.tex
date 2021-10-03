@@ -1,0 +1,1219 @@
+\documentclass[]{StandardTemplate}
+\title{Encoding Universe Polymorphism on the $ \boldsymbol\lambda \boldsymbol \Pi \boldsymbol /  \boldsymbol \equiv $-calculus}
+\usepackage{bussproofs}
+\usepackage{tikz-cd}
+\usepackage{stmaryrd}
+\usepackage{enumitem}
+\usepackage{bussproofs}
+\newtheorem{claim}{Claim}
+\usepackage{xcolor}
+\usepackage[top=1cm, bottom=1.5cm, outer=4.5cm, inner=1cm, heightrounded, marginparwidth=3.5cm, marginparsep=0.5cm]{geometry}
+
+
+
+\usepackage[backend=biber]{biblatex}
+\addbibresource{pts.bib}
+
+
+\begin{document}
+\maketitle
+\definecolor{mygray}{RGB}{100, 100, 100}
+\newcommand{\Type}{\textbf{Type}}
+\newcommand{\Kind}{\textbf{Kind}}
+\newcommand{\Set}{\textbf{Set}}
+\newcommand{\Prop}{\textbf{Prop}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\gray}[1]{\textcolor{mygray}{#1}}
+\newcommand{\red}{\longrightarrow}
+%\newcommand{\note}[1]{\marginpar{\footnotesize \gray{#1}}}
+
+\newcommand{\margincom}[1]{% a simple margin note
+        \refstepcounter{margincount}% step counter
+        \textsuperscript{\themargincount}% the number (superscript) in text preceded by m
+        \marginpar{\vspace{-2em}\footnotesize \textsuperscript{\themargincount}\gray{#1}}}
+\newcounter{margincount}
+
+
+\newcommand{\citemargin}[1]{% a simple margin note
+        \cite{#1}
+        \marginpar{\vspace{-2em}\footnotesize \gray{\cite{#1} \citeauthor{#1}, \citetitle{#1}}}}
+
+
+
+%\margincom{Note the difference between quantifying over proofs of a proposition and over propositions. In the first case we can write $ \forall_{0 = 0} x. x = \text{refl}~0$, expressing that all proofs of $ 0 = 0 $ arise from reflexivity, while in the second case we can write $ \forall_\text{Prop} \text{P}. \text{P} \lor \neg \text{P} $, expressing the excluded middle.}
+
+
+      \newcommand{\nType}{\tex{Type}}
+\newcommand{\nKind}{\text{Kind}}
+\newcommand{\nSet}{\text{Set}}
+\newcommand{\nProp}{\text{Prop}}
+\newcommand{\Lvl}{\text{Lvl}}
+\newcommand{\suc}{\text{S}}
+
+
+\section{PTS}
+\label{sec:pts}
+
+\textbf{Terms}
+\[
+  A, B, M, N ::=
+  x \in \mathcal{X} \mid
+  c \in \mathcal{C} \mid
+  s \in \mathcal{S} \mid
+  M N \mid
+  \lambda x : A. M \mid
+  \Pi x : A. B \mid
+\]
+
+\textbf{Conversion}
+Context closure of the following
+\[
+(\lambda x : A. M) N \red_\beta M [x : A \mapsto N]
+\]
+
+\textbf{Typing rules}
+  \begin{center}
+    \textbf{Context forming rules}
+  \end{center}
+\begin{center}
+  \AxiomC{}
+\RightLabel{Empty}
+\UnaryInfC{$-;-~\text{well-formed}$}
+\DisplayProof
+\hskip 1.5em
+\AxiomC{$\Sigma;- \vdash A : s$}
+\AxiomC{$c \notin \Sigma$}
+\RightLabel{Decl}
+\BinaryInfC{$\Sigma, c : A;- ~\text{well-formed} $}
+\DisplayProof
+\hskip 1.5em
+\AxiomC{$\Sigma;\Gamma\vdash A : s$}
+\AxiomC{$x \notin \Gamma$}
+\RightLabel{Decl}
+\BinaryInfC{$\Sigma; \Gamma, x : A ~\text{well-formed} $}
+\DisplayProof
+\end{center}
+\begin{center}
+    \textbf{Conversion rule}
+  \end{center}    
+\begin{center}
+  \AxiomC{$\Sigma;\Gamma \vdash M : A $}
+  \AxiomC{$\Sigma; \Gamma \vdash B : s $}  
+  \AxiomC{$A \equiv B$}
+  \RightLabel{Conv}
+\TrinaryInfC{$\Sigma; \Gamma \vdash M : B $}
+\DisplayProof
+\end{center}
+\begin{center}
+  \textbf{Regular type/term forming rules}
+\end{center}
+
+\begin{center}
+  \AxiomC{$\Sigma; \Gamma $ well-formed}
+  \AxiomC{$(s_1, s_2) \in \mathcal{A} $}
+  \RightLabel{Set}
+\BinaryInfC{$\Sigma; \Gamma  \vdash s_1 : s_2$}
+\DisplayProof
+\end{center}
+
+\begin{center} 
+  \AxiomC{$\Sigma; \Gamma \vdash A : s_1 $}
+  \AxiomC{$\Sigma; \Gamma,  x : A \vdash B : s_2 $}
+  \AxiomC{$(s_1, s_2, s_3) \in \mathcal{R} $}  
+\RightLabel{Prod}
+\TrinaryInfC{$\Sigma; \Gamma \vdash \Pi x : A . B : s_3 $}
+\DisplayProof
+\end{center}
+\begin{center}
+\AxiomC{$\Sigma; \Gamma~\text{well-formed}$}
+\AxiomC{$ x : A  \in \Gamma $}
+\RightLabel{Var}
+\BinaryInfC{$\Sigma; \Gamma \vdash x : A  $}
+\DisplayProof
+\end{center}
+\begin{center}
+\AxiomC{$\Sigma; \Gamma~\text{well-formed}$}
+\AxiomC{$ c : A  \in \Sigma $}
+\RightLabel{Const}
+\BinaryInfC{$\Sigma; \Gamma \vdash c : A  $}
+\DisplayProof
+\end{center}
+\begin{center}
+  \AxiomC{$\Sigma; \Gamma \vdash A : s_1 $}
+  \AxiomC{$\Sigma; \Gamma, x : A \vdash B :s_2 $}  
+  \AxiomC{$\Sigma; \Gamma, x : A \vdash M : B $}
+  \AxiomC{$(s_1, s_2, s_3) \in \mathcal{R} $}  
+  \RightLabel{Abs}
+\QuaternaryInfC{$\Sigma; \Gamma \vdash \lambda x : A. M : \Pi x : A. B $}
+\DisplayProof
+\end{center}
+\begin{center}
+  \AxiomC{$\Sigma;\Gamma \vdash M : \Pi x : A. B $}
+  \AxiomC{$\Sigma;\Gamma \vdash N : A $}
+  \RightLabel{App}
+\BinaryInfC{$\Sigma; \Gamma \vdash M N : B(N/x) $}
+\DisplayProof
+\end{center}
+
+
+\section{Administrative PTS}
+\label{sec:apts}
+
+
+\textbf{Terms}
+\[
+  A, B, M, N ::=
+  x \in \mathcal{X} \mid
+  c \in \mathcal{C} \mid
+  s \in \mathcal{S} \mid
+  M N \mid
+  \lambda x : A. M \mid
+  \Pi x : A. B \mid
+  M[x : A \mapsto N]
+\]
+
+\textbf{Conversion}
+Context closure of the following
+\[
+(\lambda x : A. M) N \red_\beta M [x : A \mapsto N]
+\]
+\[
+M [x : A \mapsto N] \red_{subst} M (N/x)
+\]
+
+\textbf{Typing rules}
+  \begin{center}
+    \textbf{Context forming rules}
+  \end{center}
+\begin{center}
+  \AxiomC{}
+\RightLabel{Empty}
+\UnaryInfC{$-;-~\text{well-formed}$}
+\DisplayProof
+\hskip 1.5em
+\AxiomC{$\Sigma;-| - \vdash A : s$}
+\AxiomC{$c \notin \Sigma$}
+\RightLabel{Decl}
+\BinaryInfC{$\Sigma, c : A;- ~\text{well-formed} $}
+\DisplayProof
+\hskip 1.5em
+\AxiomC{$\Sigma;\Gamma| - \vdash A : s$}
+\AxiomC{$x \notin \Gamma$}
+\RightLabel{Decl}
+\BinaryInfC{$\Sigma; \Gamma, x : A ~\text{well-formed} $}
+\DisplayProof
+\end{center}
+\begin{center}
+    \textbf{Conversion rule}
+  \end{center}    
+\begin{center}
+  \AxiomC{$\Sigma;\Gamma|- \vdash M : A $}
+  \AxiomC{$\Sigma; \Gamma|- \vdash B : s $}  
+  \AxiomC{$A \equiv B$}
+  \RightLabel{Conv}
+\TrinaryInfC{$\Sigma; \Gamma|- \vdash M : B $}
+\DisplayProof
+\end{center}
+\begin{center}
+    \textbf{Administrative rules}
+  \end{center}    
+\begin{center}
+  \AxiomC{$\Sigma; \Gamma, x: A|- \vdash M : B $}  
+  \RightLabel{Struct}
+\UnaryInfC{$\Sigma; \Gamma | x:A \vdash M : B $}
+\DisplayProof
+\end{center}
+\begin{center}
+  \AxiomC{$\Sigma; \Gamma| x : A \vdash M : B $}
+  \AxiomC{$\Sigma; \Gamma| - \vdash N : A $}    
+  \RightLabel{Subst}
+\BinaryInfC{$\Sigma; \Gamma | - \vdash M [x : A \mapsto N] : B(N/x) $}
+\DisplayProof
+\end{center}
+
+\begin{center}
+  \textbf{Regular type/term forming rules}
+\end{center}
+
+\begin{center}
+  \AxiomC{$\Sigma; \Gamma $ well-formed}
+  \AxiomC{$(s_1, s_2) \in \mathcal{A} $}
+  \RightLabel{Set}
+\BinaryInfC{$\Sigma; \Gamma |- \vdash s_1 : s_2$}
+\DisplayProof
+\end{center}
+
+\begin{center} 
+  \AxiomC{$\Sigma; \Gamma|- \vdash A : s_1 $}
+  \AxiomC{$\Sigma; \Gamma | x : A \vdash B : s_2 $}
+  \AxiomC{$(s_1, s_2, s_3) \in \mathcal{R} $}  
+\RightLabel{Prod}
+\TrinaryInfC{$\Sigma; \Gamma |- \vdash \Pi x : A . B : s_3 $}
+\DisplayProof
+\end{center}
+\begin{center}
+\AxiomC{$\Sigma; \Gamma~\text{well-formed}$}
+\AxiomC{$ x : A  \in \Gamma $}
+\RightLabel{Var}
+\BinaryInfC{$\Sigma; \Gamma|- \vdash x : A  $}
+\DisplayProof
+\end{center}
+\begin{center}
+\AxiomC{$\Sigma; \Gamma~\text{well-formed}$}
+\AxiomC{$ c : A  \in \Sigma $}
+\RightLabel{Const}
+\BinaryInfC{$\Sigma; \Gamma|- \vdash c : A  $}
+\DisplayProof
+\end{center}
+\begin{center}
+  \AxiomC{$\Sigma; \Gamma |-\vdash A : s_1 $}
+  \AxiomC{$\Sigma; \Gamma |x : A \vdash B :s_2 $}  
+  \AxiomC{$\Sigma; \Gamma | x : A \vdash M : B $}
+  \AxiomC{$(s_1, s_2, s_3) \in \mathcal{R} $}  
+  \RightLabel{Abs}
+\QuaternaryInfC{$\Sigma; \Gamma; |- \vdash \lambda x : A. M : \Pi x : A. B $}
+\DisplayProof
+\end{center}
+\begin{center}
+  \AxiomC{$\Sigma;\Gamma|- \vdash M : \Pi x : A. B $}
+  \AxiomC{$\Sigma;\Gamma|- \vdash N : A $}
+  \RightLabel{App}
+\BinaryInfC{$\Sigma; \Gamma|- \vdash M N : B[x:A \mapsto N] $}
+\DisplayProof
+\end{center}
+
+\section{Soundness}
+\label{sec:sound}
+
+Let $ \llbracket - \rrbracket : \Lambda_{PTS} \to \Lambda_{APTS} $ be the injection of terms from a regular PTS to its corresponding administrative PTS.
+
+\begin{lem}[]
+Let $ M, N \in \Lambda_{PTS} $. If $ M \red N $ then $ \llbracket M \rrbracket \red^* \llbracket N \rrbracket $.
+\end{lem}
+\begin{proof}
+A beta step in PTS is simulated by a beta step in APTS followed by a subst step.
+\end{proof}
+
+\begin{cor}[]
+Let $ M, N \in \Lambda_{PTS} $. If $ M \equiv N $ then $ \llbracket M \rrbracket \equiv \llbracket N \rrbracket $.
+\end{cor}
+
+We extend $ \llbracket - \rrbracket $ to contexts, and then to judgements by defining \[
+\llbracket \Sigma; \Gamma \vdash M : A \rrbracket := \llbracket \Sigma \rrbracket; \llbracket \Gamma \rrbracket |- \vdash \llbracket M \rrbracket : \llbracket A \rrbracket
+  \,.\]
+
+\begin{thm}[Soundness]
+  Let $ \Sigma $ be a signature, $ \Gamma $ a contexts and $ M, A $ terms in a PTS. We have
+  \begin{itemize}
+  \item If $ \Sigma; \Gamma~\text{well formed} $ then  $ \llbracket \Sigma  \rrbracket; \llbracket  \Gamma  \rrbracket~\text{well formed} $
+  \item If $  \Sigma; \Gamma \vdash M : A  $ then $ \llbracket \Sigma; \Gamma \vdash M : A \rrbracket $;    
+  \end{itemize}
+\end{thm}
+\begin{proof}
+The only case whose details are not totally clear is App.
+\end{proof}
+
+\section{Conservativity}
+\label{sec:cons}
+
+We define the map $ \llbracket - \rrbracket : \Lambda_{APTS} \to \Lambda_{PTS} $ by induction on $ M $ as
+\begin{itemize}
+\item $ \llbracket M[x : A \mapsto N] \rrbracket := \llbracket M \rrbracket (\llbracket N \rrbracket /x) $;
+\item $ \llbracket M N \rrbracket $ := $ \llbracket M \rrbracket \llbracket N \rrbracket $;
+\item etc...
+\end{itemize}
+
+We extend it to contexts and signatures, and then to judgements by the following definitions.
+\begin{align*}
+\llbracket \Sigma; \Gamma |- \vdash M : A \rrbracket &= \llbracket \Sigma \rrbracket; \llbracket \Gamma \rrbracket \vdash \llbracket M \rrbracket : \llbracket A \rrbracket\\
+\llbracket \Sigma; \Gamma |x : B \vdash M : A \rrbracket &= \llbracket \Sigma \rrbracket; \llbracket \Gamma \rrbracket, x : \llbracket B \rrbracket \vdash \llbracket M \rrbracket : \llbracket A \rrbracket
+\end{align*}
+
+\begin{lem}[]
+Let $ M, N \in \Lambda_{APTS} $. If $ M \red N $ then $ \llbracket M \rrbracket \red \llbracket N \rrbracket $ or $ \llbracket M \rrbracket = \llbracket N \rrbracket $.
+\end{lem}
+
+\begin{cor}[]
+Let $ M, N \in \Lambda_{APTS} $. If $ M \equiv N $ then $ \llbracket M \rrbracket \equiv \llbracket N \rrbracket $.
+\end{cor}
+
+\begin{thm}[Conservativity]
+  Let $ \Sigma $ be a signature, $ \Gamma $ a contexts and $ M, A $ terms in a APTS. We have
+  \begin{itemize}
+  \item If $ \Sigma; \Gamma~\text{well formed} $ then  $ \llbracket \Sigma  \rrbracket; \llbracket  \Gamma  \rrbracket~\text{well formed} $
+  \item If $  \Sigma; \Gamma \vdash M : A  $ then $ \llbracket \Sigma; \Gamma \vdash M : A \rrbracket $;    
+  \end{itemize}
+\end{thm}
+\begin{proof}
+For the case Subst we apply the substitution lemma of the PTS.
+\end{proof}
+
+\section{Encoding APTS in Dedukti}
+\label{sec:encoding}
+
+\begin{align*}
+  \text{(Sort-def) }&Sort : \Type \\
+  \text{(U-def) }&U : Sort \to \Type \\
+  \text{(El-def) }&El : (s : Sort) \to U s \to \Type \\
+  \text{(Lmax-def) }&\sqcup : 
+\end{align*}
+
+Encoding
+
+\begin{align*}
+  &\llbracket M \rrbracket_{\Sigma; \Gamma |x : A} = \lambda x : [ A ]_{\Sigma; \Gamma |-}. \llbracket M \rrbracket_{\Sigma; \Gamma, x : A |-}\\
+  &\llbracket c \rrbracket_{\Sigma; \Gamma |-} = c\\
+  &\llbracket x \rrbracket_{\Sigma; \Gamma |-} = x\\
+  &\llbracket s \rrbracket_{\Sigma; \Gamma |-} = |s|\\
+  &\llbracket \lambda x : A. M \rrbracket_{\Sigma; \Gamma |-} = abs~|s_1|~|s_2|~|s_3|~I~\llbracket A \rrbracket_{\Sigma; \Gamma |-}~\llbracket B \rrbracket_{\Sigma; \Gamma |x : A}~\llbracket M \rrbracket_{\Sigma; \Gamma |x : A}\\
+  &\llbracket \Pi x : A. B \rrbracket_{\Sigma; \Gamma |-} = Prod~|s_1|~|s_2|~|s_3|~I~\llbracket A \rrbracket_{\Sigma; \Gamma |-}~\llbracket B \rrbracket_{\Sigma; \Gamma |x:A}\\
+  &\llbracket M N \rrbracket_{\Sigma; \Gamma |-} = app~|s_1|~|s_2|~|s_3|~I~\llbracket A \rrbracket_{\Sigma; \Gamma |-}~\llbracket B \rrbracket_{\Sigma; \Gamma |x : A}~\llbracket M \rrbracket_{\Sigma; \Gamma |-}~\llbracket N \rrbracket_{\Sigma; \Gamma |-}\\
+  &\llbracket M[x : A \mapsto N]\rrbracket_{\Sigma; \Gamma |-} = \llbracket M \rrbracket_{\Sigma; \Gamma |x : A}\llbracket N \rrbracket_{\Sigma; \Gamma |-}
+\end{align*}
+
+\begin{align*}
+  &[B]_{\Sigma; \Gamma |-} = El~|s|~\llbracket B \rrbracket_{\Sigma; \Gamma |-}\\
+  &[B]_{\Sigma; \Gamma | x : A} = \Pi x : [ A ]_{\Sigma; \Gamma |-}. [ B ]_{\Sigma; \Gamma, x : A |-}
+\end{align*}
+
+\subsection{Soundness}
+\label{subsec:sound}
+
+\begin{lem}[]
+Let $ M, N \in \Lambda_{APTS} $. If $ M \red N $ then $ \llbracket M \rrbracket \red \llbracket N \rrbracket $.
+\end{lem}
+
+\begin{cor}[]
+Let $ M, N \in \Lambda_{APTS} $. If $ M \equiv N $ then $ \llbracket M \rrbracket \equiv \llbracket N \rrbracket $.
+\end{cor}
+
+\begin{thm}[Soundness]
+  Let $ \Sigma $ be a signature, $ \Gamma $ a contexts and $ M, A $ terms in an APTS. We have
+  \begin{itemize}
+  \item If $ \Sigma; \Gamma~\text{well formed} $ then  $ \llbracket \Sigma  \rrbracket; \llbracket  \Gamma  \rrbracket~\text{well formed} $
+  \item If $  \Sigma; \Gamma |x : A \vdash M : B  $ then $ \llbracket \Sigma \rrbracket; \llbracket \Gamma \rrbracket \vdash \llbracket M \rrbracket_{\Sigma; \Gamma |x : A} : [ B ]_{\Sigma; \Gamma |x : A}$
+  \item If $  \Sigma; \Gamma |- \vdash M : B  $ then $ \llbracket \Sigma \rrbracket; \llbracket \Gamma \rrbracket \vdash \llbracket M \rrbracket_{\Sigma; \Gamma |-} : [ B ]_{\Sigma; \Gamma|-}$
+  \end{itemize}
+\end{thm}
+
+\subsection{Some metatheory}
+\label{subsec:meta}
+
+\begin{lem}[]
+If $ i $ is a level term with $ \text{FV}(i) \subseteq \Theta $, then $ -;\Theta;- \vdash i~\Lvl $.
+\end{lem}
+
+\begin{lem}[]
+If $ \Sigma; \Theta; \Gamma, x : A \vdash M : B $ and $\Sigma; \Theta; \Gamma \vdash N : A $ then $ \Sigma; \Theta; \Gamma\vdash M(N/x) : B $.
+\end{lem}
+
+\begin{lem}[]
+If $ \Sigma; \Theta, l; \Gamma \vdash M : B $ and $-; \Theta; - \vdash i~\Lvl$ then $ \Sigma; \Theta; \Gamma\vdash M(i/l) : B $.
+\end{lem}
+
+\begin{lem}[]
+If $ \Sigma; \Theta; \Gamma \vdash \nSet_i : A $ and $ i \red_L j$ then $ \Sigma; \Theta; \Gamma\vdash \nSet_j : A $.
+\end{lem}
+
+
+\begin{prop}[]
+  Let $ M $ and $ A $ be terms such that $ \Sigma; \Theta; \Gamma \vdash M : A $. If $ M \red M' $ with a $ \beta, \beta_L $ or $ L $ step, then $ \Sigma; \Theta; \Gamma \vdash M' : A $.
+\end{prop}
+
+\begin{prop}[]
+$ \red_{\beta_L} $ is SN.
+\end{prop}
+
+\section{A form of conservativity}
+\label{sec:cons}
+
+It is clear that our universe polymorphic system extends the original one. More precisely, it is straightforward to verify that for any sequent \[
+\Sigma; \Gamma \vdash M : A
+\] that is provable on the original system, the sequent \[
+\Sigma;-; \Gamma \vdash M : A
+\]is provable on the polymorphic one.\margincom{More precisely, we must translate the occurrences of $ \nSet_n $ to $ \nSet_{\suc^n 0 }$, bringing the universe levels from the metalanguage to the term language.}
+
+However, do we have some form of conservativity with respect to the original PTS? Obviously, we do not have regular conservativity, as polymorphic terms cannot even be expressed on the original system. Moreover, no term that depends on level variables cannot be expressed on the original system.
+
+Therefore, no typing judgment $ \Sigma; \Theta; \Gamma \vdash M : A $ where $ A $ is of the form $ \forall l. A' $, or $ A $ or $ M $ contain a free level variable can be  recovered. But what can we say about judgements not using neither of these features? More precisely, can every judgement $ \Sigma; -; \Gamma \vdash M : A $ be translated back (up to interpreting the closed term levels as integers of the metalanguage)?
+
+Unfortunately this is still insufficient. Indeed, even thought a term is not universe polymorphic, this does not mean that its construction does not use universe polymorphic terms. This can arise in two ways :
+\begin{enumerate}
+\item A polymorphic term can be introduced using the rule Gen, and then be instantiated at some concrete level to be used;
+\item A polymorphic constant can be instantiated at some concrete level and also be used.
+\end{enumerate}
+
+However, intuitively we can see that these features are not absolutely necessary when building regular non-polymorphic terms. Indeed, if we introduce a polymorphic term using Gen to then instantiate it using Inst, this correspond in some sense to a cut, and thus we can try to find a procedure to eliminate them, as we do in natural deduction proofs.
+
+The use of a polymorphic constant is also unnecessary if we instead replace it by a constant for each universe. Of course, we cannot have infinite signatures, but as in a proof we can only use finitly many constants we can just take a large enough signature to contain all of the constants we use.
+
+The fact that universe polymorphism allows us to replace an infinity of declarations by just one is actually one of the main reasons we wanted to have it. But of course, as we have just discussed, universe polymorphism is not a necessity, as instead of declaring a universe polymorphic identity, we can just declare one identity function for each level we need. Getting rid of universe polymorphism should make things more difficult, but intuitively we see that there is no reason this would not be possible.
+
+Indeed, we will show that this is actually possible by getting rid of both points (1.) and (2.) when building proofs of closed-level terms which are not of the form $ \forall l. A $.
+
+\textbf{Eliminating UP redexes} We define a universe polymorphic redex (UP redex) as a term of the form $ (\Lambda l. M) i $. Differently from beta redexes, UP redexes are very easy to eliminate, as each $ \beta_L $ reduction step cannot create new UP redexes. 
+
+
+n occurrence of the rule Gen followed by an occurrence of the rule Inst, as shown bellow.
+
+
+\begin{center}
+  \AxiomC{$\Sigma; \Theta;\Gamma \vdash \forall l . A : \nSet_\omega$}
+  \AxiomC{$\Sigma; \Theta, l; \Gamma \vdash M : A $}
+  \RightLabel{Gen}
+  \BinaryInfC{$\Sigma; \Theta;\Gamma \vdash \Lambda l. M :\forall l. A  $}
+  \AxiomC{$-; \Theta;- \vdash i~\Lvl $}  
+  \RightLabel{Inst}
+\BinaryInfC{$\Sigma; \Theta;\Gamma \vdash Mi : A(i/l)  $}
+\DisplayProof
+\end{center}
+
+We claim that if we can get rid of UP cuts, then we can get rid of all occurrences of the Gen rule. Indeed, as we are supposing that $ A$ is not of the form $ \forall l. A' $, the derivation cannot end with an occurrence of Gen, and thus there are three possible cases: Gen is followed by Gen, Inst or Conv.
+
+
+\begin{lem}[]
+Let $ M, A$ be terms with no level variables and $ A $ not of the form $ \forall l. A' $. If $ \pi : \Sigma, -, \Gamma \vdash M : A $ contains an occurrence of Gen, we can find a derivation $ \pi' $ in which this rule is followed by Inst.
+\end{lem}
+\begin{proof}
+As we are supposing that $ A$ is not of the form $ \forall l. A' $, the derivation cannot end with an occurrence of Gen, and thus there are three possible cases: Gen is followed by Gen, Inst or Conv.
+
+Now consider an occurrence of Gen which is not followed by any other one Gen. If it is followed by any number of occurrences of Conv, we can merge all these occurrences to obtain a derivation of the form
+\begin{center}
+  \AxiomC{$\Sigma; -;\Gamma \vdash \forall l . A : \nSet_\omega$}
+  \AxiomC{$\Sigma; l; \Gamma \vdash M : A $}
+  \RightLabel{Gen}
+  \BinaryInfC{$\Sigma;-;\Gamma \vdash \Lambda l. M :\forall l. A  $}  
+  \AxiomC{$\Sigma; -;\Gamma \vdash B : \nSet_\alpha $}  
+  \AxiomC{$A \equiv B$}
+  \RightLabel{Conv}
+\TrinaryInfC{$\Sigma; -;\Gamma \vdash M : B $}
+\DisplayProof
+\end{center}
+in which the rule Conv is not followed neither by Conv or Gen. However, if $ A \equiv B $, then it is clear that $ B $ must be of the form $ \forall l.C $ with $ A \equiv C $. Therefore, the only possible rule we can use is Inst, which gives a derivation of the following form.
+
+\begin{center}
+  \AxiomC{$\Sigma; -;\Gamma \vdash \forall l . A : \nSet_\omega$}
+  \AxiomC{$\Sigma; l; \Gamma \vdash M : A $}
+  \RightLabel{Gen}
+  \BinaryInfC{$\Sigma; -;\Gamma \vdash \Lambda l. M :\forall l. A  $}  
+  \AxiomC{$\Sigma; -;\Gamma \vdash \forall l. C : \nSet_\omega $}  
+  \AxiomC{$\forall l. A \equiv \forall l. C$}
+  \RightLabel{Conv}
+\TrinaryInfC{$\Sigma; -;\Gamma \vdash M : \forall l. C $}
+  \AxiomC{$-; -;- \vdash i~\Lvl $}  
+  \RightLabel{Inst}
+\BinaryInfC{$\Sigma; -;\Gamma \vdash Mi : C(i/l)  $}
+\DisplayProof
+\end{center}
+
+Now, note that because $ A \equiv C $, we have that $ A(i/l) \equiv C(i/l) $. Moreover, as $ \Sigma; \Theta; \Gamma \vdash \forall l. C : \nSet_\omega $, we also have $ \Sigma; \Theta, l; \Gamma \vdash C : \nSet_\alpha $ for some $ \alpha $. By applying x, we conclude that we can derive $ \Sigma; \Theta; \Gamma \vdash C(i/l) : \nSet_\alpha $.
+
+Therefore, we can replace this part of the derivation by the following one, yielding an occurrence of Gen followed by Inst.
+
+\begin{center}
+  \AxiomC{$\Sigma; -;\Gamma \vdash \forall l . A : \nSet_\omega$}
+  \AxiomC{$\Sigma;  l; \Gamma \vdash M : A $}
+  \RightLabel{Gen}
+  \BinaryInfC{$\Sigma; -;\Gamma \vdash \Lambda l. M :\forall l. A  $}  
+\AxiomC{$-; -;- \vdash i~\Lvl $}  
+  \RightLabel{Inst}
+\BinaryInfC{$\Sigma; -;\Gamma \vdash Mi : A(i/l)  $}
+  \AxiomC{$\Sigma; -;\Gamma \vdash C(i/l): \nSet_\alpha $}  
+  \AxiomC{$A(i/l) \equiv C(i/l)$}
+  \RightLabel{Conv}
+\TrinaryInfC{$\Sigma; -;\Gamma \vdash M : C(i/l) $}
+\DisplayProof
+\end{center}
+
+
+\end{proof}
+
+
+First note that, because $ M, A $ do not contain free level variables, the level terms appearing in them are generated by $ 0, \suc $ and $ \sqcup $. Therefore, we can interpret the levels terms appearing on them by the integers of the metalanguage of the original system.
+
+We are closer to some form of conservativity, but this is still not enough. In particular, there are still two problems that must be treated.
+
+
+
+
+
+\textbf{Dealing with universe polymorphic variables and constants}
+
+Nevertheless, because universe quantification always appear in prenex form, we cannot do much with universe polymorphic terms other then applying them to universe levels. This observation shows that, even thought polymorphism is not part of the language of the original system, if we use 
+
+
+\section{Encoding on the $ \boldsymbol \lambda \boldsymbol \Pi $-calculus}
+\label{sec:label}
+
+\newcommand{\set}{\text{set}}
+\newcommand{\Prf}{\text{Prf}}
+\newcommand{\El}{\text{El}}
+\newcommand{\U}{\text{U}}
+\newcommand{\Sort}{\text{Sort}}
+\newcommand{\Level}{\text{L}}
+
+In order to express the UP system on the $ \lambda \Pi $-calculus, we will build our encoding little by little.
+
+First, before trying to express the types of UP, we need to express sorts, which type the types. For this we declare a type of sorts and a function that embeds them on the world of types, so we can use the to type the types of UP.
+\begin{align*}
+&\Sort : \Type \\
+&\U : \Sort \to \Type
+\end{align*}
+Now we can declare the sorts of UP as being elements of Sort. However, to do that we need a way of encoding the levels on which the sort Set depends. For this we declare a type of levels and all of the possible ways we can construct a level term.
+\begin{align*}
+  &\Level : \Type \\
+  &0 : \Level \\
+  &\text{S} : \Level \to \Level \\
+  &\sqcup : \Level \to \Level \to \Level
+\end{align*}
+Note that we don't need to add a constructor for variables, because we can just use the variables of the $ \lambda \Pi $-calculus of type L as level variables. We also do not declare yet any rewriting rule associated to levels, as this is a rather complicated question which we leave for another section.
+
+Now that we have a type for levels we can declare our sorts. We represent the sorts $ \nSet_i $ as functions taking a term of type L and producing a sort. We also add a constant to represent the sort $ \nSet_\omega $.
+\begin{align*}
+  &\nSet : \Level \to \Sort \\
+  &\nSet_\omega : \Sort
+\end{align*}
+Now we can type types using this sorts. For instance, a type $ A $ of sort $ \nSet_0 $ should be declared as an element $\llbracket A \rrbracket : \U~(\nSet~0) $.
+
+Now, if $ M$ is an element of the type $ A $ we cannot declare its translation $ \llbracket M \rrbracket $ as being typed by $ \llbracket A \rrbracket $ because $ \llbracket A \rrbracket $ is not a type. To do this on the $ \lambda \Pi $-calculus we need to transform $ \llbracket A \rrbracket $ into a type. For this, we declare the function \[
+\El : (s : \Sort) \to \U~s \to \Type
+\]which embeds the inhabitants of each $ \U~s $ into $ \Type $. Now we can declare $ \llbracket M \rrbracket $ as being an element of $ \El~(\nSet~0)~\llbracket A \rrbracket $.
+
+We now have a base structure for dealing with the sorts $ \nSet_i $, but we still need to explain how they are related to each other. More precisely, we need to express that a sort of the form $ \nSet_i $ should inhabit $ \nSet_{\suc i} $. To do this we would like to state $ \nSet~i : \U~(\nSet~(\suc~i)) $, but his is not possible because $ \nSet~i $ has already the type Sort.
+
+To solve this we should then have two copies of each sort. For this, we declare the family of constants
+\begin{align*}
+ &\set : (i : \Level) \to \U~(\nSet~(\suc~i))
+\end{align*}
+and the rule \[
+\El~\_~(\set~i) \red \U~(\nSet~i)
+\] stating that the element $ \set~i $ of $ \U~(\nSet~(\suc~i)) $ is mapped to the type $ \U~(\nSet~i) $ by $ \El $. This encodes the relationship between each $ \set~i $ and each $ \nSet~i $.
+
+We that our representation of the sorts $ \nSet_i $ is more structured, we can try to add an encoding for products, that is, encoding the following rule.
+\begin{center} 
+  \AxiomC{$\Sigma; \Theta; \Gamma \vdash A : \nSet_i $}
+  \AxiomC{$\Sigma; \Theta; \Gamma, x : A \vdash B : \nSet_j $}  
+\RightLabel{Prod}
+\BinaryInfC{$\Sigma; \Theta; \Gamma \vdash \Pi x : A . B : \nSet_{i \sqcup j} $}
+\DisplayProof
+\end{center}
+For this, we add a constant \[
+\Pi : (i~j : \Level) \to (A : \U~(\nSet~i)) \to (\El~(\nSet~i)~A \to \U~(\nSet~j)) \to (\U~(\nSet~(i \sqcup j)))
+\]which, given a type $ A : \U~(\nSet~i)) $ and a type $ \U~(\nSet~j)) $ which depends on an element of type $ \El~(\nSet~i)~A $, allows us to build a new type that lives in $(\U~(\nSet~(i \sqcup j)))$.
+
+In order to express that the elements of this type really are product types, we also add the following rule. \[
+\Pi~i~j~A~B \red \Pi a : (\El~i~A). \El~j~(B~a)
+\]
+
+Finally, we also need to declare the rules of universe polymorphism. For this, we need to encode the rule Omega, which allows us to abstract a type with a free level variable into a universe polymorphic type.
+\begin{center}
+\AxiomC{$\Sigma; \Theta, l; \Gamma \vdash A : \nSet_\alpha $}
+  \RightLabel{Omega}
+  \UnaryInfC{$\Sigma; \Theta; \Gamma \vdash \forall l. A : \nSet_\omega $}
+\DisplayProof
+\end{center}
+To do this we add the constant \[
+\forall : (\alpha : \Level \to \Sort) \to ((i : \Level) \to \U~(\alpha~i))\to \U~\nSet_\omega
+\]and the rule \[
+\El~\_~(\forall~\alpha~A) \red (i : \Level) \to \El~(\alpha~i)~(A~i)
+\,.\]
+
+\subsection{Defining the encoding}
+\label{subsec:def}
+
+We resume the signature and the reduction rules of the translation by the following list.
+\begin{align*}
+  \text{\textbf{Encoding}}&\text{\textbf{ of levels}}\\
+  \text{(L-def) }&\Level : \Type \\
+  \text{(L0-def) }&0 : \Level \\
+  \text{(LS-def) }&\text{S} : \Level \to \Level \\
+  \text{(Lmax-def) }&\sqcup : \Level \to \Level \to \Level\\
+  \text{\textbf{Encoding}}&\text{\textbf{ of sorts}}\\  
+  \text{(Sort-def) }&\Sort : \Type \\
+  \text{(Set-def) }&\nSet : \Level \to \Sort \\
+  \text{(Omega-def) }&\nSet_\omega : \Sort\\
+  &\U : \Sort \to \Type\\
+  &\El : (s : \Sort) \to \U~s \to \Type\\
+  &\set : (i : \Level) \to \U~(\nSet~(\suc~i))\\
+  &\El~\_~(\set~i) \red \U~(\nSet~i)\\
+  &\text{\textbf{Encoding of products}}\\  
+  &\Pi : (i~j : \Level) \to (A : \U~(\nSet~i)) \to (\El~(\nSet~i)~A \to \U~(\nSet~j)) \to (\U~(\nSet~(i \sqcup j)))\\
+  &\Pi~i~j~A~B \red \Pi a : (\El~i~A). \El~j~(B~a)\\
+                          &\text{\textbf{Encoding of universe polymorphism}}\\
+                          &\forall : (\alpha : \Level \to \Sort) \to ((i : \Level) \to \U~(\alpha~i))\to \U~\nSet_\omega\\
+&\El~\_~(\forall~\alpha~A) \red (i : \Level) \to \El~(\alpha~i)~(A~i)
+\end{align*}
+
+The goal is to define a translation so that we can translate well typed terms. Therefore, we cannot just define a function $ \Lambda_{\text{UP}}\to \Lambda_{\lambda \Pi / \equiv}  $, as we this wouldn't be a total function. A second try would be to define a function $ \Lambda_{\text{UP}}^\text{well-typed} \to \Lambda_{\lambda \Pi / \equiv} $, which is only defined for well typed terms. However, as we will see, in order to define the translation of a type $ M $ we need both to have a type which it inhabits and a sort for this type.
+
+The correct definition will be to define a function which takes three terms $ M, A, s $ such that 
+
+\begin{definition}[Encoding of terms of UP]
+We define a term translation function \[
+\llbracket - \rrbracket : \Lambda_{\text{UP}}^\text{well-typed} \to \Lambda_{\lambda \Pi / \equiv} 
+\]for the well types terms of $ UP $ inductively by the following. 
+\begin{align*}
+  \llbracket x \rrbracket &= x \\
+  \llbracket c \rrbracket &= c \\
+  \llbracket M~N \rrbracket &= \llbracket M \rrbracket \llbracket N \rrbracket \\
+  \llbracket \lambda x : A. M \rrbracket &= \lambda x : \El~s_A~\llbracket A \rrbracket. \llbracket M \rrbracket\\
+  \llbracket \Pi x : A. B \rrbracket &= \Pi~s_A~s_B(x : \El~s_A~\llbracket A \rrbracket) \to  \El~s_B~\llbracket B \rrbracket\\
+  \llbracket \nSet_i\rrbracket &= \set~[i] \\
+  \llbracket \Lambda l. M \rrbracket &= \lambda l : \Level. \llbracket M \rrbracket \\
+  \llbracket \forall l  \rrbracket &= (l : \Level) \to \llbracket M \rrbracket
+\end{align*}
+\end{definition}
+
+
+Now that we have a type for levels we can declare our sorts. We represent the sorts $ \nSet_i $ as functions taking a term of type L and producing a sort. We also add a constant to represent the sort $ \nSet_\omega $.
+\begin{align*}
+\end{align*}
+\newpage
+
+\section{Non-Prenex UP}
+\label{sec:nonprenex}
+
+\subsection{Metatheory LambdaPiM}
+\label{subsec:label}
+
+\begin{prop}[Weakening]
+If   $ \Sigma; \Gamma \vdash M : A $ and $\Sigma;\Gamma,\Gamma'~\text{well-formed}$ then $ \Sigma; \Gamma, \Gamma' \vdash M : A $.
+\end{prop}
+
+\begin{thm}[]
+If $ \Sigma; \Gamma \vdash A' : s $ and $ A \equiv_R A' $ then \begin{itemize}
+\item  $ \Sigma; \Gamma, x: A, \Gamma' \vdash M : B $ implies $ \Sigma; \Gamma, x: A', \Gamma' \vdash M : B $
+\item  $ \Sigma; \Gamma, x: A, \Gamma' $ well-formed implies $ \Sigma; \Gamma, x: A', \Gamma' $ well-formed
+\end{itemize} 
+\end{thm}
+\begin{proof}
+  By induction on the derivation tree. For all cases it is trivial, except with var and decl.
+  \begin{itemize}
+  \item Var : If $ M \neq x $, it suffices to apply the IH. If $ M = x $, then we have
+    \begin{center}
+\AxiomC{$\Sigma;\Gamma, x: A, \Gamma'~\text{well-formed}$}
+\AxiomC{$ x : A \in \Gamma, x: A, \Gamma' $}
+\RightLabel{Var}
+\BinaryInfC{$\Sigma;\Gamma, x: A, \Gamma' \vdash x : A  $}
+\DisplayProof
+\end{center}
+By IH, $\Sigma;\Gamma, x: A', \Gamma'~\text{well-formed}$, and thus
+\begin{center}
+\AxiomC{$\Sigma;\Gamma, x: A', \Gamma'~\text{well-formed}$}
+\AxiomC{$ x : A' \in \Gamma, x: A', \Gamma' $}
+\RightLabel{Var}
+\BinaryInfC{$\Sigma;\Gamma, x: A', \Gamma' \vdash x : A'  $}
+\DisplayProof
+\end{center}
+As  $ \Sigma; \Gamma \vdash A' : s $ and $\Sigma;\Gamma, x: A', \Gamma'~\text{well-formed}$, by weakening we have $ \Sigma; \Gamma, x : A', \Gamma' \vdash A' : s  $ and thus by conv we conclude
+\begin{center}
+\AxiomC{$\Sigma;\Gamma, x: A', \Gamma' \vdash x : A'$}
+\AxiomC{$  \Sigma; \Gamma, x : A', \Gamma' \vdash A' : s$}
+\AxiomC{$ A \equiv_R A' $}
+\RightLabel{Conv}
+\TrinaryInfC{$\Sigma;\Gamma, x: A', \Gamma' \vdash x : A  $}
+\DisplayProof
+\end{center}
+\item Decl : If $ \Gamma' $ is not empty, it suffices to apply the IH. If $ \Gamma' = - $, then we have
+\begin{center}
+  \AxiomC{$\Sigma;\Gamma~\text{well-formed}$}
+\AxiomC{$\Sigma;\Gamma \vdash x: A$}
+\RightLabel{Decl}
+\BinaryInfC{$\Sigma;\Gamma, x: A~\text{well-formed}$}
+\DisplayProof
+\end{center}
+By hypothesis we have $ \Sigma;\Gamma \vdash x : A' $, and as $ \Sigma; \Gamma $ well-formed, we conclude with Decl
+\begin{center}
+  \AxiomC{$\Sigma;\Gamma~\text{well-formed}$}
+\AxiomC{$\Sigma;\Gamma \vdash x: A'$}
+\RightLabel{Decl}
+\BinaryInfC{$\Sigma;\Gamma, x: A'~\text{well-formed}$}
+\DisplayProof
+\end{center}
+  \end{itemize}
+\end{proof}
+
+\begin{thm}[]
+If $ \Sigma \vdash A' : s $, $ A \equiv_R A' $ and $ \Sigma, c : A, \Sigma'; \Gamma \vdash M : B $ then we have \[
+\Sigma, c : A, \Sigma'; \Gamma \vdash M : B 
+\,.\]
+\end{thm}
+\begin{proof}
+Similar to Thm 5.2
+\end{proof}
+
+\subsection{System}
+\label{subsec:label}
+
+
+
+
+\newcommand{\ctx}{{\Sigma;\Theta;\Gamma}}
+
+\textbf{Levels}
+\[
+i, j ::= 0~|~\text{S}~i~|~i \sqcup j~|~l \in \mathcal{L}\,,
+\]
+
+\textbf{Levels and Omega}
+\[
+s ::= \nSet_i \mid \nProp_i \mid \nSet_{\omega_n}
+\]
+
+\textbf{Terms}
+\[
+A, B, M, N ::= x \in \mathcal{X}~|~c \in \mathcal{C}~|~s~|~M N~|~\lambda x : A . M~|~\Pi x : A. B~|~M \cdot i~|~\Lambda l. M~|~\forall l. A~
+\]
+
+\textbf{Conversion}
+
+\begin{align*}
+  (\lambda x : A. M) N &\red_\beta M (N/x)\\
+  (\Lambda l. M) \cdot i &\red_{\beta_L} M (l/i)\\
+  i \equiv_L j &\iff \forall \sigma, \llbracket i \rrbracket_\sigma = \llbracket j \rrbracket_\sigma
+\end{align*}
+
+Before presenting the rules we define the function $ \square$, which gives the successor of a given sort
+\begin{align*}
+  \square \nSet_i &= \nSet_{S i}\\
+  \square \nProp_i &= \nProp_{S i}\\
+  \square \nSet_{\omega_n} &= \nSet_{\omega_{n+1}}
+\end{align*}
+and we define the function $ \lor $, which gives the product of two sorts
+\begin{align*}
+  k_i \lor k'_j &= k'_{i \sqcup j} & \text{with } k, k' \in \{\nSet, \nProp\}\\
+  k_i \lor \nSet_{\omega_n} &= \nSet_{\omega_n} & \text{with } k \in \{\nSet,\nProp\}\\
+  \nSet_{\omega_n} \lor k_i &= \nSet_{\omega_n} & \text{with } k \in \{\nSet,\nProp\}\\  \nSet_{\omega_m} \lor \nSet_{\omega_n} &= \nSet_p & \text{with } p = \text{max}\{n,m\}
+\end{align*}
+
+Note that this two functions are just aliases, as on the definition we have equality and not conversion. The symbols $ \diamond, \square $ are not even part of the grammar, they are just here to allow us to speak about successors and products in a more homogeneous way.
+
+  \begin{center}
+    \textbf{Signature forming rules}
+  \end{center}
+\begin{center}
+  \AxiomC{}
+\RightLabel{Empty}
+\UnaryInfC{$-;\Theta;-~\text{well-formed}$}
+\DisplayProof
+\hskip 1.5em
+\AxiomC{$\Sigma;\Theta;- \vdash c : A$}
+\AxiomC{$c \notin \Sigma$}
+\RightLabel{Decl}
+\BinaryInfC{$\Sigma, c  : A;\Theta;-~\text{well-formed} $}
+\DisplayProof
+\end{center}
+
+\begin{center}
+  \textbf{Context forming rules}
+\end{center}
+\begin{center}
+  \AxiomC{}
+\RightLabel{Empty}
+\UnaryInfC{$\Sigma;\Theta;-~\text{well-formed}$}
+\DisplayProof
+\hskip 1.5em
+\AxiomC{$\Sigma;\Theta;\Gamma \vdash A : s$}
+\AxiomC{$x \notin \Gamma$}
+\RightLabel{Decl}
+\BinaryInfC{$\Sigma;\Theta;\Gamma, x : A ~\text{well-formed} $}
+\DisplayProof
+\end{center}
+
+\begin{center}
+    \textbf{Conversion rule}\margincom{By showing confluence, subject reduction and strong normalization for this system, we can show that the second hypothesis is admissible}
+  \end{center}
+    
+\begin{center}
+  \AxiomC{$\Sigma; \Theta;\Gamma \vdash M : A $}
+  \AxiomC{$\Sigma; \Theta;\Gamma \vdash A : s $}    
+  \AxiomC{$\Sigma; \Theta;\Gamma \vdash B : s $}  
+  \AxiomC{$A \equiv B$}
+  \RightLabel{Conv}
+\QuaternaryInfC{$\Sigma; \Theta;\Gamma \vdash M : B $}
+\DisplayProof
+\end{center}
+  \begin{center}
+    \textbf{Level forming rules}
+  \end{center}
+\begin{center}
+  \AxiomC{$ l \in \Theta $}
+\RightLabel{Lvar}
+\UnaryInfC{$-;\Theta;-\vdash l~\Lvl  $}
+\DisplayProof
+\hskip 1.5em
+  \AxiomC{$~$}
+\RightLabel{L0}
+\UnaryInfC{$-;\Theta;-\vdash 0~\Lvl  $}
+\DisplayProof
+\end{center}\begin{center}
+\AxiomC{$-;\Theta;-\vdash i~\Lvl  $}
+\RightLabel{LS}
+\UnaryInfC{$-;\Theta;-\vdash \text{S}~i~\Lvl  $}
+\DisplayProof
+\hskip 1.5em
+\AxiomC{$-;\Theta;-\vdash i~\Lvl  $}
+\AxiomC{$-;\Theta;-\vdash j~\Lvl  $}
+\RightLabel{Lmax}
+\BinaryInfC{$-;\Theta;-\vdash i\sqcup j~\Lvl  $}
+\DisplayProof
+\end{center}
+\begin{center}
+  \textbf{Regular type/term forming rules}
+\end{center}
+
+\begin{center}
+  \AxiomC{$-;\Theta;-\vdash i~\Lvl$}
+  \AxiomC{$\Sigma; \Theta; \Gamma $ well-formed}  
+  \RightLabel{Sort}
+  \LeftLabel{$ k = \nSet, \nProp $}
+\BinaryInfC{$\Sigma; \Theta;\Gamma \vdash k_i : k_{\text{S} i}$}
+\DisplayProof
+\end{center}
+
+\begin{center} 
+  \AxiomC{$\Sigma; \Theta; \Gamma \vdash A : s $}
+  \AxiomC{$\Sigma; \Theta; \Gamma, x : A \vdash B : s' $}  
+\RightLabel{Prod}
+\BinaryInfC{$\Sigma; \Theta; \Gamma \vdash \Pi x : A . B : s \lor s' $}
+\DisplayProof
+\end{center}
+\begin{center}
+\AxiomC{$\Sigma; \Theta;\Gamma~\text{well-formed}$}
+\AxiomC{$ x : A \in \Gamma $}
+\RightLabel{Var}
+\BinaryInfC{$\Sigma; \Theta;\Gamma \vdash x : A  $}
+\DisplayProof
+\end{center}
+\begin{center}
+\AxiomC{$\Sigma; \Theta;\Gamma~\text{well-formed}$}
+\AxiomC{$c : A \in \Sigma$}
+\RightLabel{Const}
+\BinaryInfC{$\Sigma; \Theta;\Gamma \vdash c : A  $}
+\DisplayProof
+\end{center}
+\begin{center}
+  \AxiomC{$\Sigma; \Theta; \Gamma \vdash A : s $}
+  \AxiomC{$\Sigma; \Theta; \Gamma, x : A \vdash B : s' $}  
+  \AxiomC{$\Sigma; \Theta; \Gamma, x : A \vdash M : B $}
+  \RightLabel{Abs}
+\TrinaryInfC{$\Sigma; \Theta ;\Gamma \vdash \lambda x : A . M :\Pi x : A . B  $}
+\DisplayProof
+\end{center}
+\begin{center}
+  \AxiomC{$\Sigma;\Theta ;\Gamma \vdash M : \Pi x : A . B $}
+  \AxiomC{$\Sigma;\Theta;  \Gamma \vdash N : A $}
+  \RightLabel{App}
+\BinaryInfC{$\Sigma;\Theta; \Gamma \vdash M N : B(N/x) $}
+\DisplayProof
+\end{center}
+\begin{center}
+  \textbf{Universe polymorphism rules}
+\end{center}
+
+\begin{center}
+\AxiomC{$\Sigma; \Theta; \Gamma $ well-formed}  
+  \RightLabel{SortOmega}
+  \UnaryInfC{$\Sigma; \Theta; \Gamma \vdash \nSet_{\omega_n} : \nSet_{\omega_{n+1}} $}
+\DisplayProof
+\end{center}
+
+
+\begin{center}
+  \AxiomC{$\Sigma; \Theta, l; \Gamma \vdash A : k_i $}
+\AxiomC{$\Sigma; \Theta; \Gamma $ well-formed}  
+\RightLabel{Omega1}
+  \LeftLabel{$ k=\nSet,\nProp $}
+  \BinaryInfC{$\Sigma; \Theta; \Gamma \vdash \forall l. A : \nSet_\omega $}
+\DisplayProof
+\end{center}
+
+\begin{center}
+  \AxiomC{$\Sigma; \Theta, l; \Gamma \vdash A : \nSet_{\omega_n} $}
+\AxiomC{$\Sigma; \Theta; \Gamma $ well-formed}  
+\RightLabel{Omega2}
+  \BinaryInfC{$\Sigma; \Theta; \Gamma \vdash \forall l. A : \nSet_{\omega_n} $}
+\DisplayProof
+\end{center}
+
+\begin{center}
+\AxiomC{$\Sigma; \Theta; \Gamma $ well-formed}  
+  \AxiomC{$\Sigma; \Theta, l; \Gamma \vdash M : A $}
+  \RightLabel{Gen}
+\BinaryInfC{$\Sigma; \Theta;\Gamma \vdash \Lambda l. M :\forall l. A  $}
+\DisplayProof
+\end{center}
+\begin{center}
+  \AxiomC{$\Sigma; \Theta;\Gamma \vdash M :\forall l. A $}
+  \AxiomC{$-; \Theta;- \vdash i~\Lvl $}  
+  \RightLabel{Inst}
+\BinaryInfC{$\Sigma; \Theta;\Gamma \vdash M\cdot i : A(i/l)  $}
+\DisplayProof
+\end{center}
+
+
+
+\subsection{Metatheory}
+\label{subsec:meta}
+
+\begin{prop}[Inversion]
+  Let $ \ctx \vdash M : A $.
+  \begin{itemize}
+  \item If $ M = x $ then for some $ A' $ with $ A \equiv A' $ we have $ x : A' \in \Gamma $
+  \item If $ M = c $ then for some $ A' $ with $ A \equiv A' $ we have $ c : A' \in \Sigma $
+  \item If $ M = s $ then $ A \equiv_L \square~s $
+  \item If $ M = N~P $ then there are $ B,C,x $ with $ A \equiv C(P/x) $ and \begin{itemize}
+    \item $ \ctx \vdash N : \Pi x: B.C $
+    \item $ \ctx \vdash P : B$
+    \end{itemize}
+  \item If $ M = \lambda x : B. N $ then for some $ C$ with  $ A \equiv \Pi x : B . C  $ we have \begin{itemize}
+    \item $ \ctx \vdash B : s $
+    \item  $ \ctx, x : B \vdash C : s' $
+    \item  $ \ctx, x : B \vdash  N : C$
+    \end{itemize}
+  \item If $ M = \Pi x : A . B $ then for some $ s,s' $ we have $ A \equiv_L s \lor s' $ with \begin{itemize}
+    \item $ \ctx \vdash A : s $
+    \item $ \ctx, x : A \vdash B : s' $
+    \end{itemize}
+  \item If $ M = \Lambda l. M $ then there is $B $ with $ A \equiv \forall l. B $ and \begin{itemize}
+    \item $ \Sigma;\Theta,l;\Gamma \vdash M : B $
+    \end{itemize}
+  \item If $ M = \forall l. B $, either there is $ i , A$ with  $A = \nSet_\omega $ and  \begin{itemize}
+    \item $ \Gamma;\Theta,l;\Sigma \vdash B : k_i $ with $ k = \nSet $ or $ \nProp $
+    \end{itemize} or $ A = \nSet_{\omega_n} $ for some $ n \in \N $ and \begin{itemize}
+    \item $ \Gamma;\Theta,l;\Sigma \vdash B : \nSet_{\omega_n} $
+    \end{itemize}
+  \end{itemize}
+\end{prop}
+\begin{proof}
+By induction on the derivation tree.
+\end{proof}
+
+\begin{prop}
+If $ -;\Theta;- \vdash i~\Lvl $ and $ i \equiv_L j $ then $ -; \Theta; - \vdash j~\Lvl $
+\end{prop}
+\begin{proof}
+If suffices to verify that if $ i \equiv_L j $ then the same variables appear in them.
+\end{proof}
+
+\begin{cor}
+If $ \ctx \vdash M : A $, $ M \equiv_L M' $ and $ A \equiv_L A' $ then $ \ctx \vdash M' : A' $.
+\end{cor}
+
+\begin{prop}[]
+If $ \Sigma; \Theta; \Gamma \vdash M : A, A' $ then $ A \equiv A' $.
+\end{prop}
+\begin{proof}
+  By induction on the first derivation tree.
+  \begin{itemize}
+  \item SortOmega, Omega1, Omega2, Conv : Trivial
+  \item Var, Const, Sort : By inversion on the second derivation tree
+  \item Prod : A consequence of
+  \item Abs : 
+  \end{itemize}
+\end{proof}
+
+\begin{cor}
+If $ \Sigma; \Theta; \Gamma \vdash A : s, s' $ then $ s \equiv_L s' $.
+\end{cor}
+\begin{proof}
+Follows from the fact that, if $ s, s' $ are sorts, the only conversion that can be applied is the level conversion.
+\end{proof}
+
+\newcommand{\Nn}{\text{N}}
+
+\section{Encoding}
+\label{sec:enc}
+\begin{center}\textbf{Encoding of levels}\end{center}
+\begin{alignat*}{2}  
+&  \text{(L-def)}\quad&&\Level : \Type \\
+&  \text{(L0-def)}\quad&&0 : \Level \\
+&  \text{(LS-def)}\quad&&\text{S} : \Level \to \Level \\
+&  \text{(Lmax-def)}\quad&&\sqcup : \Level \to \Level \to \Level
+\end{alignat*}
+\begin{center}\textbf{Encoding of meta-naturals}\end{center}
+\begin{alignat*}{3}
+&  \text{(N-def)}\quad&&\Nn : \Type \\
+&  \text{(Nzero-def)}\quad&&\text{zero} : \Nn \\
+&  \text{(Nsucc-def)}\quad&&\text{succ} : \Nn \to \Nn \\
+&  \text{(Nmax-def)}\quad&&\text{max} : \Nn \to \Nn \to \Nn\\
+&  \text{(Nmax-rule1)}\quad&&\text{max}~\text{zero}~(\text{succ}~x)\quad&&\red x\\
+&  \text{(Nmax-rule2)}\quad&&\text{max}~(\text{succ}~x)~\text{zero}\quad&&\red x\\  
+&  \text{(Nmax-rule3)}\quad&&\text{max}~(\text{succ}~x)~(\text{succ}~y)\quad&&\red \text{suc}~(\text{max}~x~y)
+\end{alignat*}
+\begin{alignat*}{2}  
+  \text{\textbf{Encoding}}&\text{\textbf{ of sorts}}\\  
+  \text{(Sort-def) }&\Sort : \Type \\
+  \text{(Set-def) }&\nSet : \Level \to \Sort \\
+  \text{(Prop-def) }&\nProp : \Level \to \Sort \\  
+  \text{(SetOmega-def) }&\nSet_\omega : \Nn \to \Sort\\
+  \text{(U-def) }&\U : \Sort \to \Type\\
+  \text{(El-def) }&\El : (s : \Sort) \to \U~s \to \Type\\
+  \text{\textbf{Encoding}}&\text{\textbf{ of sort rule}}\\
+  \text{(Rule-def) }&\lor : \Sort \to \Sort \to \Sort\\
+  \text{(Rule-rule1) }&(\nSet~i)~\lor~(\nSet~j) \red \nSet~(i~\sqcup~j)\\
+  \text{(Rule-rule1) }&(\nProp~i)~\lor~(\nSet~j) \red \nSet~(i~\sqcup~j)\\
+  \text{(Rule-rule1) }&(\nProp~i)~\lor~(\nProp~j) \red \nProp~(i~\sqcup~j)\\
+  \text{(Rule-rule1) }&(\nSet~i)~\lor~(\nProp~j) \red \nProp~(i~\sqcup~j)\\
+  \text{(Rule-rule1) }&(\nSet_\omega~n)~\lor~(\nSet_\omega~m) \red \nSet_\omega~(\text{max}~n~m)\\
+  \text{(Rule-rule1) }&(\nSet_\omega~n)~\lor~(\nProp~\_) \red \nSet_\omega~n\\
+  \text{(Rule-rule1) }&(\nSet_\omega~n)~\lor~(\nSet~\_) \red \nSet_\omega~n\\
+  \text{(Rule-rule1) }&(\nProp~\_)~\lor~(\nSet_\omega~n) \red \nSet_\omega~n\\
+  \text{(Rule-rule1) }&(\nSet~\_)~\lor~(\nSet_\omega~n) \red \nSet_\omega~n\\      
+  &\text{\textbf{Encoding of products}}\\  
+  &\Pi : (s~s' : \Sort) \to (A : \U~s) \to (\El~s~A \to \U~s') \to (\U~(s~\lor~s'))\\
+  &\Pi~s~s'~A~B \red \Pi a : (\El~s~A). \El~s'~(B~a)\\
+                          &\text{\textbf{Encoding of universe polymorphism}}\\
+                          &\forall_S : (\alpha : \Level \to \Level) \to ((i : \Level) \to \U~(\nSet~(\alpha~i)))\to \U~\nSet_\omega\\
+                          &\forall_P : (\alpha : \Level \to \Level) \to ((i : \Level) \to \U~(\nProp~(\alpha~i)))\to \U~\nSet_\omega\\
+                          &\forall_\omega : (n : \Nn) \to (\Level \to (\U~(\nSet_\omega~n)))\to \U~(\nSet_\omega~n)\\  
+&\El~\_~(\forall~\alpha~A) \red (i : \Level) \to \El~(\alpha~i)~(A~i)
+\end{alignat*}
+
+We write $ \Sigma_{UP} $ for the signature of the encoding in $ \lambda \Pi / R $.
+
+
+\newcommand{\pushright}[1]{\ifmeasuring@#1\else\omit\hfill$\displaystyle#1$\fi\ignorespaces}
+\newcommand{\specialcell}[1]{\ifmeasuring@#1\else\omit$\displaystyle#1$\ignorespaces\fi}
+
+We define the encoding of a judgement $ \ctx \vdash M : A $ by induction on $ M $.
+
+\begin{align*}
+  \llbracket x \rrbracket_\ctx &\ni x\\
+  \llbracket c \rrbracket_\ctx &\ni c\\
+  \llbracket s \rrbracket_\ctx &\ni \hat{\diamond}~\llbracket s \rrbracket\\
+  \llbracket i \rrbracket_\ctx &\ni \llbracket i \rrbracket\\
+  \llbracket M N \rrbracket_\ctx &\ni [M]_\ctx~[N]_\ctx\\
+  \llbracket \lambda x : A. M \rrbracket_\ctx &\ni \lambda x : \El~\llbracket s_A \rrbracket~[A]_\ctx. [M]_{\ctx, x:A} &\text{if } \ctx \vdash A : s_A\\
+  \llbracket \Pi x : A. B \rrbracket_\ctx &\ni \hat{\Pi}~\llbracket s_A \rrbracket~\llbracket s_B \rrbracket~[A]_\ctx~(\lambda x : \El~\llbracket s_A \rrbracket ~ [A]_\ctx. [B]_{\ctx, x: A})  &\text{if } \ctx \vdash A : s_A, B : s_B\\
+  \llbracket \Lambda l. M \rrbracket_\ctx &\ni \lambda l : \Level. [M]_{\Sigma; \Theta, l; \Gamma} \\
+  \llbracket M \cdot i \rrbracket_\ctx &\ni [M]_\ctx~[i]\\  
+  \llbracket \forall l . A \rrbracket_\ctx &\ni \hat{\forall}_S~(\lambda l : \Level. \llbracket i \rrbracket)~(\lambda l : \Level. \llbracket A \rrbracket_{\Sigma; \Theta, l; \Gamma}) & \text{if } \Sigma; \Theta, l; \Gamma \vdash A : \nSet_i\\
+  \llbracket \forall l . A \rrbracket_\ctx &\ni \hat{\forall}_P~(\lambda l : \Level. \llbracket i \rrbracket)~(\lambda l : \Level. [ A ]_{\Sigma; \Theta, l; \Gamma}) & \text{if } \Sigma; \Theta, l; \Gamma \vdash A : \nProp_i\\
+  \llbracket \forall l . A \rrbracket_\ctx &\ni \hat{\forall}_\omega~\llbracket n \rrbracket~(\lambda l : \Level. \llbracket A \rrbracket_{\Sigma; \Theta, l; \Gamma}) & \text{if } \Sigma; \Theta, l; \Gamma \vdash A : \nSet_{\omega_n}\\
+\end{align*}
+\begin{align*}
+  \text{Signature}& \\
+  \llbracket \Sigma = c_1 : A_1, ..., c_k : A_k \rrbracket &\ni \Sigma_{UP}, c_1 : \El~[s_1]~[ A_1]_{\Sigma;-;-}, ..., c_k : \El~[s_k]~[ A_k]_{\Sigma;-;-}& \text{if } \Sigma;-;- \vdash A_i : s_i\\
+  \text{Level vars}&\\
+  \llbracket \Sigma;- \rrbracket &\ni [\Sigma]; - \\
+  \llbracket   \Sigma;\Theta', l \rrbracket &\ni [\Sigma;\Theta'], l : \Level \\
+  \text{Context}& \\
+  \llbracket \Sigma;\Theta;- \rrbracket &\ni [\Sigma;\Theta] \\
+  \llbracket \Sigma;\Theta;\Gamma', x : A \rrbracket &\ni [\Sigma;\Theta;\Gamma'], x : \El~s_A~A & \text{if } \Sigma;\Theta;\Gamma' \vdash A : s_A
+\end{align*}
+
+Note that the signature $ \Sigma $ is translated as a signature, whereas the level vars $ \Theta $ and the context $ \Gamma $ are translated in the context. Indeed, the character '$ ; $', which separates the signature from the context, is introduced in $ \llbracket \Sigma;- \rrbracket $. That is, informally the translation of $ \ctx $ is $ \Sigma_{UP},[\Sigma];[\Theta],[\Gamma] $.
+
+\begin{assumption}
+If $ i \equiv_L j $ then $ [i] \equiv_L [j] $.
+\end{assumption}
+
+\begin{thm}[]
+If $ N_1, N_2 \in \llbracket M \rrbracket_\ctx$ then $ N_1 \equiv_L N_2 $.
+\end{thm}
+\begin{proof}
+  By induction in $ M $. We do the case $ \Pi x : A . B $. 
+
+  We have that the $ N_i$ are of the form \[
+\hat{\Pi}~ [s_A^{1,i}]~[s^i_B]~A^{1,i}~(\lambda x : \El~[s_A^{2,i}]~A^{2,i}.B^i )
+\,.\] where
+\begin{itemize}
+\item $ A^{1,1}, A^{1,2}, A^{2,1},A^{2,2} \in \llbracket A \rrbracket_{\ctx, x:A}$
+\item $ B^1, B^2 \in \llbracket B \rrbracket_\ctx$  
+\item for $s = s_A^{1,1}, s_A^{1,2}, s_A^{2,1}, s_A^{2,2} $ we have $ \ctx \vdash A : s $
+\item for $s = s_B^1, s_B^2$ we have $ \ctx \vdash B : s $, 
+\end{itemize}
+  By IH, $ A^{1,1} \equiv_L A^{1,2}, A^{2,1} \equiv_L A^{2,2} $ and $ B^1 \equiv_L B^2 $. By Corollary 5.1, $ s_A^{1,1} \equiv_L s_A^{1,2}, s_A^{2,1} \equiv_L s_A^{2,2}$ and $ s_B^1 \equiv_L s_B^2 $. Therefore, we deduce $ N_1 \equiv_L N_2 $.
+  
+\end{proof}
+
+
+\subsection{Correctness of the translation}
+\label{subsec:correct}
+
+\begin{thm}
+If $ -; \Theta; - \vdash i~\Lvl $ then for all $ (\Sigma_{UP};\hat{\Theta}) \in \llbracket -;\Theta;- \rrbracket $ we have \[
+\Sigma_{UP};\hat{\Theta} \vdash \llbracket i \rrbracket : \Level
+\,.\]
+\end{thm}
+
+\begin{thm}[]
+Let $ -;\Theta;- \vdash i~\Lvl $. If $ i \equiv_L j $ then for  all $ (\Sigma_{UP};\hat{\Theta}) \in \llbracket -;\Theta;- \rrbracket $ we have \[
+\Sigma_{UP};\hat{\Theta} \vdash \llbracket j \rrbracket : \Level
+\,.\]
+\end{thm}
+\begin{proof}
+A consequence of the fact that $ \equiv_L $ preserves the free variables.
+\end{proof}
+
+\begin{thm}[]
+If $ \Sigma_{UP}, \hat{\Sigma}; \hat{\Theta}, \hat{\Gamma} \vdash \El~\llbracket s \rrbracket~\hat{A} : \textbf{s}$ and $ \El~\llbracket s \rrbracket~\hat{A} \equiv_L \El~\llbracket s' \rrbracket~\overline{A} $ then \[
+ \Sigma_{UP}, \hat{\Sigma}; \hat{\Theta}, \hat{\Gamma} \vdash \El~\llbracket s' \rrbracket~\overline{A} : \textbf{s}
+  \,.\]
+\end{thm}
+
+
+\begin{cor}
+Let $ \Sigma; \Theta; \Gamma \vdash M : A $. Let $ (\Sigma_{UP}, \hat{\Sigma};\hat{\Theta}, \hat{\Gamma}) \in \llbracket \ctx \rrbracket $ and $  $
+\end{cor}
+
+\begin{thm}[]
+Let $ \ctx $ be a context.  \begin{enumerate}
+\item If $ \ctx  $ well-formed then for $ (\Sigma_{UP}, \hat{\Sigma};\hat{\Theta}, \hat{\Gamma}) \in \llbracket \ctx \rrbracket $ we have \[
+\Sigma_{UP}, \hat{\Sigma};\hat{\Theta}, \hat{\Gamma} \text{ well-formed}
+\,.\]
+\item If $ \ctx \vdash M : A $ and $ \ctx \vdash A : s $ then for $ (\Sigma_{UP}, \hat{\Sigma};\hat{\Theta}, \hat{\Gamma}) \in \llbracket \ctx \rrbracket $, $ \hat{M} \in \llbracket M \rrbracket_\ctx $ and $ \hat{A} \in \llbracket A \rrbracket_\ctx $ \[
+\Sigma_{UP}, \hat{\Sigma}; \hat{\Theta}, \hat{\Gamma} \vdash \hat{M} : \El~\llbracket s \rrbracket~\hat{A}
+\,.\]
+\end{enumerate} 
+\end{thm}
+\begin{proof}
+  By induction on the derivation.
+
+  \textbf{Var} : We have 
+  \begin{center}
+\AxiomC{$\Sigma; \Theta;\Gamma~\text{well-formed}$}
+\AxiomC{$ x : A \in \Gamma $}
+\RightLabel{Var}
+\BinaryInfC{$\Sigma; \Theta;\Gamma \vdash x : A  $}
+\DisplayProof
+\end{center}
+
+
+
+
+Let $ (\Sigma_{UP}, \hat{\Sigma};\hat{\Theta}, \hat{\Gamma}) \in \llbracket \ctx \rrbracket $ and $ \hat{A} \in \llbracket A \rrbracket_\ctx $. Let $ s $ be a sort with $ \ctx \vdash A : s $. We need to show $ \Sigma_{UP}, \hat{\Sigma}; \hat{\Theta}, \hat{\Gamma} \vdash x : \El~\llbracket s \rrbracket~\hat{A} $.
+
+We have $ \hat{\Gamma} = \hat{\Gamma_1}, x : \El~\llbracket s' \rrbracket~\overline{A}, \hat{\Gamma_2} $, where by definition of the translation, $\overline{A} \in \llbracket A \rrbracket_{\Sigma;\Theta;\Gamma_1} $ and $ \Sigma;\Theta;\Gamma_1 \vdash \overline{A} : s'$.
+
+By IH, $\Sigma_{UP}, \hat{\Sigma};\hat{\Theta}, \hat{\Gamma}~\text{well-formed}$. Thus, by rule Var, we have
+\begin{center}
+\AxiomC{$\Sigma_{UP}, \hat{\Sigma};\hat{\Theta}, \hat{\Gamma}~\text{well-formed}$}
+\AxiomC{$ x : \El~\llbracket s' \rrbracket~\overline{A} \in \Gamma $}
+\RightLabel{Var}
+\BinaryInfC{$\Sigma_{UP}, \hat{\Sigma};\hat{\Theta}, \hat{\Gamma} \vdash x : \El~\llbracket s' \rrbracket~\overline{A}  $}
+\DisplayProof
+\end{center}
+
+By x, y we have $ \llbracket s \rrbracket \equiv_L \llbracket s' \rrbracket $ and $ \hat{A} \equiv_L \overline{A} $, and thus, by th z, \[
+\Sigma_{UP}, \hat{\Sigma};\hat{\Theta}, \hat{\Gamma} \vdash x : \El~\llbracket s \rrbracket~\hat{A} 
+  \,.\]
+
+\textbf{Const} : 
+
+\begin{center}
+\AxiomC{$\Sigma; \Theta;\Gamma~\text{well-formed}$}
+\AxiomC{$c : A \in \Sigma$}
+\AxiomC{$\Sigma; -;- \vdash A : s $}
+\RightLabel{Const}
+\TrinaryInfC{$\Sigma; \Theta;\Gamma \vdash c : A  $}
+\DisplayProof
+\end{center}
+
+\end{proof}
+
+
+
+\printbibliography
+\end{document}

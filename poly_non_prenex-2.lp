@@ -23,11 +23,12 @@ with max z $x ↪ $x
 with max (s $x) (s $y) ↪ s (max $x $y);
 
 // Sorts
-symbol Sort : TYPE;
-symbol U : Sort → TYPE;
-symbol Set : L → Sort;
-symbol Prop : L → Sort;
-symbol Setω : N → Sort;
+constant symbol Sort : TYPE;
+constant symbol U : Sort → TYPE;
+constant symbol Set : L → Sort;
+constant symbol Prop : L → Sort;
+constant symbol Setω : N → Sort;
+constant symbol SortLevel : Sort;
 
 // Rule
 symbol ∨ : Sort → Sort → Sort;
@@ -51,13 +52,27 @@ with □ (Setω $n) ↪ Setω (s $n);
 // Terms
 symbol El : Π (s : Sort), U s → TYPE;
 
+// Level
+constant symbol Level : U SortLevel;
+rule El _ Level ↪ L;
+
+
 // Sort inclusion
 symbol ⋄ : Π (s : Sort), U (□ s);
 rule El _ (⋄ $s) ↪ U $s; 
-//symbol ⇝ : TYPE;
+
+symbol sortProd : Π (s : Sort) (A : U s) (s' : El s A → Sort), Sort;
+rule sortProd SortLevel Level (λ y, $S[])   ↪ $S;
+rule sortProd SortLevel Level (λ x, $S[x])  ↪ Setω z
+with sortProd (Set $i) _ (λ _, $s')  ↪ ∨ (Set $i) $s';
+
+compute sortProd (Set (S O)) (⋄ (Set O)) (λ _, Set (S (S O)));
+compute sortProd SortLevel Level (λ y, Set (S O));
+compute sortProd SortLevel Level (λ y, Set y);
+
 
 // Products
-symbol ⇝ : Π (s s' : Sort) (A : U s), (El s A → U s') → U (∨ s s');
+symbol ⇝ : Π (s : Sort) (A : U s) (s' : El s A → Sort), (Π x : El s A, U (s' x)) → U (sortProd s A s');
 rule El _ (⇝ $s $s' $A $B) ↪ Π (x : El $s $A), El $s' ($B x);
 
 
